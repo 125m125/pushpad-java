@@ -1,12 +1,18 @@
 package xyz.pushpad;
 
-import org.json.simple.JSONObject;
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URL;
+
+import javax.net.ssl.HttpsURLConnection;
+
 import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import java.io.*;
-import java.net.URL;
-import javax.net.ssl.HttpsURLConnection;
 
 public class Notification {
   public Pushpad pushpad;
@@ -17,6 +23,12 @@ public class Notification {
   public Integer ttl;
 
   public Notification(Pushpad pushpad, String title, String body, String targetUrl) {
+    if (title.length() > 30) {
+      throw new IllegalArgumentException("The title exceeds the maximum length of 30");
+    }
+    if (body.length() > 120) {
+      throw new IllegalArgumentException("The message exceeds the maximum length of 120");
+    }
     this.pushpad = pushpad;
     this.title = title;
     this.body = body;
@@ -48,6 +60,7 @@ public class Notification {
     return this.deliverTo(uids);
   }
 
+  @SuppressWarnings("unchecked")
   private String reqBody(String[] uids, String[] tags) {
     JSONObject body = new JSONObject();
     JSONObject notificationData = new JSONObject();
