@@ -7,11 +7,11 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.util.Base64;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import javax.net.ssl.HttpsURLConnection;
+import javax.xml.bind.DatatypeConverter;
 
 import org.json.simple.JSONArray;
 import org.json.simple.parser.JSONParser;
@@ -33,7 +33,7 @@ public class Pushpad {
       Mac mac = Mac.getInstance("HmacSHA1");
       mac.init(signingKey);
       byte[] rawHmac = mac.doFinal(data.getBytes());
-      encoded = Base64.getEncoder().withoutPadding().encodeToString(rawHmac);
+      encoded = DatatypeConverter.printHexBinary(rawHmac).toLowerCase();
     } catch (NoSuchAlgorithmException | InvalidKeyException e) { 
       e.printStackTrace();
     }
